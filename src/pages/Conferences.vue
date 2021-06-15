@@ -124,7 +124,10 @@
               v-model.trim="message"
               @keyup="textareaPressKey"
             ></textarea>
-            <button class="send-button buttonPurple center" type="submit"></button>
+            <button
+              class="send-button buttonPurple center"
+              type="submit"
+            ></button>
           </form>
         </div>
       </div>
@@ -323,7 +326,7 @@ export default {
       this.connection.on("newUserConnected", async (newUser) => {
         this.users.push(this.user(newUser));
 
-        setTimeout(this.chatResize, 0)
+        setTimeout(this.chatResize, 0);
 
         if (this.mediaRecorder) {
           await this.mediaRecorder.stop();
@@ -556,7 +559,12 @@ export default {
       );
     },
     async connectToVideoServer() {
-      this.videoServerConnection = io(webrtcServer,{secure: true});
+      this.videoServerConnection = io(webrtcServer, {
+        /*secure: true*/ withCredentials: true,
+        extraHeaders: {
+          "my-custom-header": "abcd",
+        },
+      });
       this.videoServerConnection.emit("join", this.curSession.confirenceId);
 
       this.newSource();
@@ -776,7 +784,7 @@ export default {
   margin: 0 !important;
 }
 
-.center{
+.center {
   margin: 0 auto !important;
 }
 
