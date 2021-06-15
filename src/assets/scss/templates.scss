@@ -1,0 +1,21 @@
+//Шаблон кнопок
+%button{
+  text-decoration: none;
+  outline: none;
+  padding: 15px 25px;
+  border-radius: 10px;
+  letter-spacing: 1px;
+  border: 0;
+  cursor: pointer;
+  border-radius: 20px;
+  display: block;
+  margin: 0 auto;
+  line-height: 20px;
+}
+//Шаблон контейнера
+%containerBig{
+    width: 100vw;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 100px 50px;
+}

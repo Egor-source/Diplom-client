@@ -1,0 +1,89 @@
+// Шрифты
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap");
+// Переменные
+@import "./variables.scss";
+// Миксины
+@import "./mixins.scss";
+// Шаблоны
+@import "./templates.scss";
+//Скроллбар
+@import "./scrollbar.scss";
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    font-family: $mainFont;
+    font-size: 16px;
+    line-height: 21px;
+    font-weight: 400;
+}
+
+#app {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+// Кнопки
+.buttonPurple {
+    @extend %button;
+    background-color: #4c004c;
+    color: #fff;
+    transition: 0.5s;
+
+    &:hover {
+        background-color: #310131;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: default;
+    }
+}
+
+// Контейнеры
+.card {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+    min-width: 200px;
+    min-height: 200px;
+    max-width: 600px;
+}
+
+.inpText {
+    width: 100%;
+    border-radius: 10px;
+    border: 2px solid #000;
+    outline: none;
+    padding: 10px;
+    box-sizing: border-box;
+    line-height: 0;
+}
+
+// Отступы
+.mb_20 {
+    margin-bottom: 20px !important;
+}
+
+.invalid {
+    border: 2px solid red;
+}
+
+.error {
+    color: red;
+    text-align: start;
+}
+
+.center {
+    text-align: center !important;
+}
+
+.text-bold {
+    font-weight: bold;
+}

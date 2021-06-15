@@ -1,0 +1,40 @@
+{
+  "name": "browser-client",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "@microsoft/signalr": "^5.0.6",
+    "core-js": "^3.6.5",
+    "normalize.css": "^8.0.1",
+    "scss": "^0.2.4",
+    "sha3": "^2.1.4",
+    "socket.io-client": "^4.1.2",
+    "uuid": "^8.3.2",
+    "vue": "^2.6.11",
+    "vue-router": "^3.2.0",
+    "vuelidate": "^0.7.6",
+    "webrtc-adapter": "^8.0.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "node-sass": "^4.12.0",
+    "sass-loader": "^8.0.2",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "description": "## Project setup ``` npm install ```",
+  "main": "babel.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
