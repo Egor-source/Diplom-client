@@ -559,12 +559,7 @@ export default {
       );
     },
     async connectToVideoServer() {
-      this.videoServerConnection = io(webrtcServer, {
-        /*secure: true*/ withCredentials: true,
-        extraHeaders: {
-          "my-custom-header": "abcd",
-        },
-      });
+      this.videoServerConnection = io(webrtcServer, { transport : ['websocket'] });
       this.videoServerConnection.emit("join", this.curSession.confirenceId);
 
       this.newSource();
