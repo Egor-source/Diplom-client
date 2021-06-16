@@ -480,6 +480,7 @@ export default {
         voiceStream: null,
         mediaSource: new MediaSource(),
         sourceBuffer: null,
+        queue: [],
         streamerControls: {
           action: this.setStreamer,
         },
@@ -559,15 +560,22 @@ export default {
       );
     },
     async connectToVideoServer() {
-      this.videoServerConnection = io(webrtcServer, { transport : ['websocket']});
+      this.videoServerConnection = io(webrtcServer, {
+        transport: ["websocket"],
+      });
       this.videoServerConnection.emit("join", this.curSession.confirenceId);
 
       this.newSource();
 
+      let queue = [];
+
       this.videoServerConnection.on("stream", async (data) => {
         let decriptData = await this.decrypt(data);
+        queue.push(decriptData);
         try {
-          this.sourceBuffer.appendBuffer(decriptData);
+          if (!this.sourceBuffer.updating) {
+            this.sourceBuffer.appendBuffer(queue.pop());
+          }
         } catch (e) {
           console.error(e);
         }
@@ -623,8 +631,11 @@ export default {
         }
 
         let decriptData = await this.decrypt(data);
+        user.queue.push(decriptData);
         setTimeout(() => {
-          user.sourceBuffer.appendBuffer(decriptData);
+          if (!user.sourceBuffer.updating) {
+            user.sourceBuffer.appendBuffer(user.queue.pop());
+          }
         }, 0);
       });
 
