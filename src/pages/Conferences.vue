@@ -569,7 +569,7 @@ export default {
         try {
           this.sourceBuffer.appendBuffer(decriptData);
         } catch (e) {
-          location.reload();
+          console.error(e);
         }
       });
 
