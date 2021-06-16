@@ -640,7 +640,7 @@ export default {
       this.stream = URL.createObjectURL(this.mediaSource);
       this.mediaSource.addEventListener("sourceopen", () => {
         this.sourceBuffer = this.mediaSource.addSourceBuffer(
-          "video/webm; codecs=vp9"
+          "video/webm; codecs=vp8"
         );
 
         let queue = [];
@@ -687,7 +687,7 @@ export default {
     },
     async recordMedia() {
       this.mediaRecorder = new MediaRecorder(this.mediaStream, {
-        mimeType: "video/webm; codecs=vp9",
+        mimeType: "video/webm; codecs=vp8",
       });
 
       this.mediaRecorder.ondataavailable = async (event) => {
