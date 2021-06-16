@@ -566,24 +566,37 @@ export default {
       this.videoServerConnection.emit("join", this.curSession.confirenceId);
 
       this.newSource();
+      let buffer = [];
 
-      let queue = [];
 
       this.videoServerConnection.on("stream", async (data) => {
         let decriptData = await this.decrypt(data);
-        queue.push(decriptData);
-        try {
-          if (!this.sourceBuffer.updating) {
-            this.sourceBuffer.appendBuffer(queue.pop());
-          }
-        } catch (e) {
-          console.error(e);
+        buffer.push(new Blob([new Uint8Array(decriptData)]));
+
+        let reader = new FileReader();
+      
+        reader.onload = (e)=>{
+          this.sourceBuffer.appendBuffer(new Uint8Array(e.target.result));
+
+          reader.onload=null;
         }
+
+        reader.readAsArrayBuffer(buffer.shift());
+        // try {
+        //   if (!this.sourceBuffer.updating) {
+        //     this.sourceBuffer.appendBuffer(queue.pop());
+        //   }
+        // } catch (e) {
+        //   console.error(e);
+        // }
       });
 
       this.videoServerConnection.on("endStream", async () => {
-        this.newSource();
-        this.showVideoControls = false;
+        // this.mediaSource.endOfStream();
+        // this.mediaSource.removeSourceBuffer(this.sourceBuffer);
+        // let evt = new Event("sourceopen");
+        // this.mediaSource.dispatchEvent(evt);
+        // this.showVideoControls = false;
       });
 
       this.videoServerConnection.on("setStreamer", (login) => {
@@ -683,6 +696,7 @@ export default {
 
       this.mediaRecorder.ondataavailable = async (event) => {
         let enctiptData = await this.encrypt(await event.data.arrayBuffer());
+        console.log(321);
         this.videoServerConnection.emit(
           "stream",
           this.curSession.confirenceId,
