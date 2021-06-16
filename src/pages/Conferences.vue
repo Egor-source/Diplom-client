@@ -567,12 +567,28 @@ export default {
 
       this.newSource();
 
-      this.videoServerConnection.on("endStream", async () => {
-        // this.mediaSource.endOfStream();
-        // this.mediaSource.removeSourceBuffer(this.sourceBuffer);
-        // let evt = new Event("sourceopen");
-        // this.mediaSource.dispatchEvent(evt);
-        // this.showVideoControls = false;
+           let queue = [];
+        this.videoServerConnection.on("stream", async (data) => {
+          let decriptData = await this.decrypt(data);
+          queue.push(decriptData);
+
+          let video = document.querySelector(".viewerVideo");
+          video.addEventListener("error", (event) => {
+            console.error(event.target.error);
+          });
+
+          if (!this.sourceBuffer.updating && queue.length > 0) {
+            this.sourceBuffer.appendBuffer(queue.pop());
+          }
+        });
+
+      this.videoServerConnection.on("endStream", () => {
+        while(queue.length>0){
+          if(queue.length==0){
+            this.newSource();
+          }
+        }
+        
       });
 
       this.videoServerConnection.on("setStreamer", (login) => {
@@ -622,7 +638,7 @@ export default {
         let decriptData = await this.decrypt(data);
         user.queue.push(decriptData);
         setTimeout(() => {
-          if (!user.sourceBuffer.updating) {
+          if (!user.sourceBuffer.updating &&  user.queue.length>0) {
             user.sourceBuffer.appendBuffer(user.queue.pop());
           }
         }, 0);
@@ -643,25 +659,7 @@ export default {
           "video/webm; codecs=vp8"
         );
 
-        let queue = [];
-        this.videoServerConnection.on("stream", async (data) => {
-          let decriptData = await this.decrypt(data);
-          queue.push(decriptData);
-
-          console.log(1);
-
-          let video = document.querySelector('.viewerVideo');
-          video.addEventListener('error',event=>{
-            console.error(event.target.error);
-          })
-
-          if (!this.sourceBuffer.updating &&queue.length>0) {
-            console.log(2);
-            this.sourceBuffer.appendBuffer(queue.pop());
-
-          }
-
-        });
+   
       });
     },
     async startStream() {
