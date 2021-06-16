@@ -650,9 +650,15 @@ export default {
 
           console.log(1);
 
-          if (!this.sourceBuffer.updating) {
+          let video = document.querySelector('.viewerVideo');
+          video.addEventListener('error',event=>{
+            console.error(event.target.error);
+          })
+
+          if (!this.sourceBuffer.updating &&queue.length>0) {
             console.log(2);
             this.sourceBuffer.appendBuffer(queue.pop());
+
           }
 
         });
