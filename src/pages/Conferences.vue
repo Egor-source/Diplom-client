@@ -567,11 +567,6 @@ export default {
         let decriptData = await this.decrypt(data);
         queue.push(decriptData);
 
-        let video = document.querySelector(".viewerVideo");
-        video.addEventListener("error", (event) => {
-          console.error(event.target.error);
-        });
-
         if (!this.sourceBuffer.updating && queue.length > 0) {
           this.sourceBuffer.appendBuffer(queue.pop());
         }
@@ -580,7 +575,11 @@ export default {
       this.videoServerConnection.on("endStream", () => {
         this.sourceBuffer.addEventListener("updateend", () => {
           this.mediaSource.endOfStream();
+          this.stream=null;
+           let video = document.querySelector(".viewerVideo");
+          video.load();
           this.newSource();
+         
         });
       });
 
@@ -632,7 +631,6 @@ export default {
           user.voiceStream = new Audio();
           user.voiceStream.src = URL.createObjectURL(user.mediaSource);
           user.voiceStream.play();
-
         }
 
         let decriptData = await this.decrypt(data);
@@ -644,14 +642,14 @@ export default {
         }, 0);
       });
 
-     this.videoServerConnection.on("stopVoiceStream", async (login) => {
+      this.videoServerConnection.on("stopVoiceStream", async (login) => {
         let user = await this.users.find((user) => {
           return user.login == login;
         });
         user.sourceBuffer.addEventListener("updateend", () => {
-             user.mediaSource.endOfStream();
+          user.mediaSource.endOfStream();
           user.voiceStream = null;
-          user.mediaSource=new MediaSource();
+          user.mediaSource = new MediaSource();
         });
       });
     },
@@ -784,7 +782,6 @@ export default {
       this.voiceMediaRecorder = null;
       this.voiceMediaStream = null;
 
-      console.log(321);
       this.videoServerConnection.emit(
         "stopVoiceStream",
         this.curSession.confirenceId,
