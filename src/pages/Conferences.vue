@@ -579,7 +579,7 @@ export default {
            let video = document.querySelector(".viewerVideo");
           video.load();
           this.newSource();
-         
+          console.log(321);
         });
       });
 
@@ -819,7 +819,11 @@ export default {
   height: 100%;
   border-radius: 13px;
   background: #000;
+  &:hover+.video-buttons{
+    opacity: 1;
+  }
 }
+
 .video-buttons {
   position: absolute;
   width: 100%;
@@ -831,7 +835,7 @@ export default {
   display: flex;
   justify-content: center;
   column-gap: 50px;
-  &:hover {
+  &:hover{
     opacity: 1;
   }
 }
