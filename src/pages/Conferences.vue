@@ -486,11 +486,6 @@ export default {
         },
       };
 
-      user.mediaSource.addEventListener("sourceopen", () => {
-        user.sourceBuffer = user.mediaSource.addSourceBuffer(
-          "audio/webm;codecs=opus"
-        );
-      });
       return user;
     },
     //Конвертация строки в Uint8Array
@@ -567,28 +562,26 @@ export default {
 
       this.newSource();
 
-           let queue = [];
-        this.videoServerConnection.on("stream", async (data) => {
-          let decriptData = await this.decrypt(data);
-          queue.push(decriptData);
+      let queue = [];
+      this.videoServerConnection.on("stream", async (data) => {
+        let decriptData = await this.decrypt(data);
+        queue.push(decriptData);
 
-          let video = document.querySelector(".viewerVideo");
-          video.addEventListener("error", (event) => {
-            console.error(event.target.error);
-          });
-
-          if (!this.sourceBuffer.updating && queue.length > 0) {
-            this.sourceBuffer.appendBuffer(queue.pop());
-          }
+        let video = document.querySelector(".viewerVideo");
+        video.addEventListener("error", (event) => {
+          console.error(event.target.error);
         });
 
-      this.videoServerConnection.on("endStream", () => {
-        while(queue.length>0){
-          if(queue.length==0){
-            this.newSource();
-          }
+        if (!this.sourceBuffer.updating && queue.length > 0) {
+          this.sourceBuffer.appendBuffer(queue.pop());
         }
-        
+      });
+
+      this.videoServerConnection.on("endStream", () => {
+        this.sourceBuffer.addEventListener("updateend", () => {
+          this.mediaSource.endOfStream();
+          this.newSource();
+        });
       });
 
       this.videoServerConnection.on("setStreamer", (login) => {
@@ -630,25 +623,36 @@ export default {
         });
 
         if (!user.voiceStream) {
+          user.mediaSource.addEventListener("sourceopen", () => {
+            user.sourceBuffer = user.mediaSource.addSourceBuffer(
+              "audio/webm;codecs=opus"
+            );
+          });
+
           user.voiceStream = new Audio();
           user.voiceStream.src = URL.createObjectURL(user.mediaSource);
           user.voiceStream.play();
+
         }
 
         let decriptData = await this.decrypt(data);
         user.queue.push(decriptData);
         setTimeout(() => {
-          if (!user.sourceBuffer.updating &&  user.queue.length>0) {
+          if (!user.sourceBuffer.updating && user.queue.length > 0) {
             user.sourceBuffer.appendBuffer(user.queue.pop());
           }
         }, 0);
       });
 
-      this.videoServerConnection.on("stopVoiceStream", async (login) => {
+     this.videoServerConnection.on("stopVoiceStream", async (login) => {
         let user = await this.users.find((user) => {
           return user.login == login;
         });
-        user.voiceStream = null;
+        user.sourceBuffer.addEventListener("updateend", () => {
+             user.mediaSource.endOfStream();
+          user.voiceStream = null;
+          user.mediaSource=new MediaSource();
+        });
       });
     },
     newSource() {
@@ -658,8 +662,6 @@ export default {
         this.sourceBuffer = this.mediaSource.addSourceBuffer(
           "video/webm; codecs=vp8"
         );
-
-   
       });
     },
     async startStream() {
@@ -782,9 +784,10 @@ export default {
       this.voiceMediaRecorder = null;
       this.voiceMediaStream = null;
 
-      this.videoServerConnection.on(
+      console.log(321);
+      this.videoServerConnection.emit(
         "stopVoiceStream",
-        this.confirenceId,
+        this.curSession.confirenceId,
         this.curSession.login
       );
     },
