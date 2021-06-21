@@ -576,9 +576,8 @@ export default {
         this.sourceBuffer.addEventListener("updateend", async () => {
           this.streamer = true;
           this.mediaSource.endOfStream();
-          this.stream = null;
-          this.streamer = false;
           this.newSource();
+          this.streamer = false;
         });
       });
 
