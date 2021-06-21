@@ -573,13 +573,12 @@ export default {
       });
 
       this.videoServerConnection.on("endStream", () => {
-        this.sourceBuffer.addEventListener("updateend", () => {
+        this.sourceBuffer.addEventListener("updateend", async () => {
+          this.streamer = true;
           this.mediaSource.endOfStream();
-          this.stream=null;
-           let video = document.querySelector(".viewerVideo");
-          video.load();
+          this.stream = null;
+          this.streamer = false;
           this.newSource();
-          console.log(321);
         });
       });
 
@@ -819,7 +818,7 @@ export default {
   height: 100%;
   border-radius: 13px;
   background: #000;
-  &:hover+.video-buttons{
+  &:hover + .video-buttons {
     opacity: 1;
   }
 }
@@ -835,7 +834,7 @@ export default {
   display: flex;
   justify-content: center;
   column-gap: 50px;
-  &:hover{
+  &:hover {
     opacity: 1;
   }
 }
